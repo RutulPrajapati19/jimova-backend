@@ -30,10 +30,17 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(request -> {
                     var corsConfig = new CorsConfiguration();
-                    // ✦ FIXED: Added 5174 to the allowed origins ✦
-                    corsConfig.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:5174"));
+
+                    // ✦ THE FIX: Added your live Vercel URL to the VIP list! ✦
+                    corsConfig.setAllowedOrigins(List.of(
+                            "http://localhost:5173",
+                            "http://localhost:5174",
+                            "https://jimova-fronted.vercel.app" // Do not put a slash at the end
+                    ));
+
                     corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                     corsConfig.setAllowedHeaders(List.of("*"));
+                    corsConfig.setAllowCredentials(true); // Added this to ensure secure connections pass
                     return corsConfig;
                 }))
                 .authorizeHttpRequests(auth -> auth
