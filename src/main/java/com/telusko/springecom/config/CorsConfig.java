@@ -13,11 +13,11 @@ public class CorsConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**") // Applies CORS to every endpoint in your app
-                        .allowedOrigins("http://localhost:5174") // YOUR exact React URL from the error
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // OPTIONS is crucial for preflight
-                        .allowedHeaders("*") // Allows Authorization and other headers
-                        .allowCredentials(true); // Required if you use cookies or auth tokens
+                registry.addMapping("/**") // Allow all endpoints (/api/products, /api/orders, etc.)
+                        .allowedOrigins("https://jimova-fronted.vercel.app") // ✦ YOUR EXACT VERCEL URL ✦
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Allow these actions
+                        .allowedHeaders("*")
+                        .allowCredentials(true);
             }
         };
     }
