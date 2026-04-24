@@ -13,9 +13,13 @@ public class CorsConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**") // Allow all endpoints (/api/products, /api/orders, etc.)
-                        .allowedOrigins("https://jimova-fronted.vercel.app") // ✦ YOUR EXACT VERCEL URL ✦
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Allow these actions
+                registry.addMapping("/**")
+                        .allowedOrigins(
+                                "https://jimova-fronted.vercel.app", // Your live customer site
+                                "http://localhost:5173",             // If your Admin app uses Vite
+                                "http://localhost:3000"              // If your Admin app uses Create React App
+                        )
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
             }
