@@ -1,0 +1,43 @@
+package com.enterprise.smartEcommerce.entities;
+
+
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "cart_items")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class CartItem {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    // Which user does this cart item belong to?
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    // Which product is in the cart?
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
+
+    // How many of this product does the user want?
+    @Column(nullable = false)
+    private Integer quantity;
+
+    @CreationTimestamp
+    @Column(updatable = false)
+    private LocalDateTime addedAt;
+}
