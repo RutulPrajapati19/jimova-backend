@@ -29,8 +29,7 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
 
-    // ✅ Read frontend URL from environment variable — set this in Render dashboard
-    // e.g. FRONTEND_URL = https://jimova-fronted.vercel.app
+    // Read frontend URL from environment variable — set this in Render dashboard
     @Value("${FRONTEND_URL:http://localhost:5173}")
     private String frontendUrl;
 
@@ -44,28 +43,17 @@ public class SecurityConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
+                        // ✦ Let browser pre-flight checks pass unconditionally
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                        // Public auth endpoints
-                        .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/auth/forgot-password").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/auth/reset-password").permitAll()
+                        // ✦ Make all auth routes fully public (fixes the 403 error)
+                        .requestMatchers("/api/auth/**").permitAll()
 
-                        // Public product browsing
+                        // ✦ Public product browsing
                         .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
 
-                        // Admin product management — must be authenticated
-                        .requestMatchers(HttpMethod.POST,   "/api/products/**").authenticated()
-                        .requestMatchers(HttpMethod.PUT,    "/api/products/**").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/api/products/**").authenticated()
-
-                        // Protected routes
-                        .requestMatchers("/api/payment/**").authenticated()
-                        .requestMatchers("/api/cart/**").authenticated()
-                        .requestMatchers("/api/orders/**").authenticated()
-
+                        // ✦ Everything else requires a valid JWT token
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
@@ -89,7 +77,7 @@ public class SecurityConfig {
 
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:5173",
-                frontendUrl   // ✅ your Vercel URL from env var
+                frontendUrl   // Your Vercel URL from env var
         ));
 
         configuration.setAllowedMethods(List.of(
