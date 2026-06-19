@@ -6,6 +6,7 @@ import com.enterprise.smartEcommerce.services.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -16,15 +17,17 @@ public class EmailServiceImpl implements EmailService {
 
     private final JavaMailSender mailSender;
 
+    @Async
     @Override
     public void sendOrderConfirmation(String toEmail, Order order) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(toEmail);
-            message.setSubject("Jimova — Order #" + order.getId() + " Confirmed");
+            message.setSubject("Jimova — Order #" + order.getId() + " Confirmed ✓");
 
             StringBuilder sb = new StringBuilder();
-            sb.append("Thank you for your order at Jimova.\n\n");
+            sb.append("Hi ").append(order.getCustomerName()).append(",\n\n");
+            sb.append("Thank you for shopping at Jimova! Your order has been confirmed.\n\n");
             sb.append("Order #").append(order.getId()).append("\n");
             sb.append("Date: ").append(order.getOrderDate()).append("\n");
             sb.append("Status: ").append(order.getStatus()).append("\n\n");
@@ -38,14 +41,13 @@ public class EmailServiceImpl implements EmailService {
                             .multiply(new BigDecimal(item.getQuantity()));
                     sb.append("• ").append(item.getProductName())
                             .append(" x").append(item.getQuantity())
-                            .append(" — ₹").append(lineTotal.toPlainString())
+                            .append(" — $").append(lineTotal.toPlainString())
                             .append("\n");
                 }
             }
 
             sb.append("─────────────────────────────\n");
-            sb.append("TOTAL: ₹").append(order.getTotalAmount()).append("\n\n");
-            sb.append("Your order will be shipped to: ").append(order.getShippingAddress()).append("\n\n");
+            sb.append("TOTAL: $").append(order.getTotalAmount()).append("\n\n");
             sb.append("Thank you for shopping with Jimova.\n");
             sb.append("— The Jimova Team");
 
@@ -53,23 +55,28 @@ public class EmailServiceImpl implements EmailService {
             mailSender.send(message);
             System.out.println("✅ Order confirmation email sent to: " + toEmail);
         } catch (Exception e) {
-            System.err.println("❌ Failed to send order confirmation email: " + e.getMessage());
+            System.err.println("❌ Failed to send email: " + e.getMessage());
         }
     }
 
+    @Async
     @Override
     public void sendPasswordResetEmail(String to, String resetLink) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(to);
-        message.setSubject("Jimova — Reset Your Password");
-        message.setText(
-                "Hi,\n\n" +
-                        "We received a request to reset your Jimova account password.\n\n" +
-                        "Click the link below to reset your password (valid for 30 minutes):\n\n" +
-                        resetLink + "\n\n" +
-                        "If you didn't request this, you can safely ignore this email.\n\n" +
-                        "— The Jimova Team"
-        );
-        mailSender.send(message);
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(to);
+            message.setSubject("Jimova — Reset Your Password");
+            message.setText(
+                    "Hi,\n\n" +
+                            "We received a request to reset your Jimova account password.\n\n" +
+                            "Click the link below to reset your password (valid for 30 minutes):\n\n" +
+                            resetLink + "\n\n" +
+                            "If you didn't request this, you can safely ignore this email.\n\n" +
+                            "— The Jimova Team"
+            );
+            mailSender.send(message);
+        } catch (Exception e) {
+            System.err.println("❌ Failed to send reset email: " + e.getMessage());
+        }
     }
 }

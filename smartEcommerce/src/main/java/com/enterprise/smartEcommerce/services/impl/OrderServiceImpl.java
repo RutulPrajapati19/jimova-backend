@@ -48,6 +48,8 @@ public class OrderServiceImpl implements OrderService {
 
         Order order = Order.builder()
                 .user(user)
+                .customerName(user.getName())
+                .customerEmail(user.getEmail())
                 .totalAmount(totalAmount)
                 .status("COMPLETED")
                 .orderDate(LocalDateTime.now())

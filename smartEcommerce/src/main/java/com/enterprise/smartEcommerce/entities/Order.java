@@ -21,12 +21,14 @@ public class Order {
     @JoinColumn(name = "user_id")
     private User user;
 
+    private String customerName;
+    private String customerEmail;
+
     private BigDecimal totalAmount;
     private LocalDateTime orderDate;
     private String status;
     private String shippingAddress;
 
-    // ✦ THE FIX: Add mappedBy="order" to tell Spring that OrderItem manages the relationship ✦
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> items;
 }
