@@ -52,7 +52,7 @@ public class OrderServiceImpl implements OrderService {
                 .customerEmail(user.getEmail())
                 .totalAmount(totalAmount)
                 .status("COMPLETED")
-                .orderDate(LocalDateTime.now())
+                .orderDate(LocalDateTime.now(java.time.ZoneId.of("Asia/Kolkata")))
                 .shippingAddress("Pending / Provided via Stripe")
                 .build();
 
