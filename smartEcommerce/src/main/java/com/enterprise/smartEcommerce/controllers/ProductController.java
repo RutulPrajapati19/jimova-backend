@@ -3,14 +3,12 @@ package com.enterprise.smartEcommerce.controllers;
 import com.enterprise.smartEcommerce.dtos.PageResponse;
 import com.enterprise.smartEcommerce.dtos.ProductRequest;
 import com.enterprise.smartEcommerce.dtos.ProductResponse;
-import com.enterprise.smartEcommerce.entities.Product;
 import com.enterprise.smartEcommerce.services.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -89,14 +87,5 @@ public class ProductController {
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
-    }
-
-    @GetMapping("/api/products/search")
-    public ResponseEntity<List<Product>> searchProducts(@RequestParam String query) {
-        if (query == null || query.trim().isEmpty()) {
-            return ResponseEntity.ok(List.of());
-        }
-        List<Product> results = productRepository.searchProducts(query.trim());
-        return ResponseEntity.ok(results);
     }
 }
