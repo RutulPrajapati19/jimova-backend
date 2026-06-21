@@ -81,12 +81,15 @@ public class EmailServiceImpl implements EmailService {
     }
 
     private void sendEmail(String toEmail, String toName, String subject, String textContent) {
+        System.out.println("🔑 API Key first 10 chars: " + (brevoApiKey != null ? brevoApiKey.substring(0, 10) : "NULL"));
+        System.out.println("📧 Sending email to: " + toEmail);
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("api-key", brevoApiKey);
 
         Map<String, Object> body = new HashMap<>();
-        body.put("sender", Map.of("name", "Jimova", "email", "noreply@jimova.com"));
+        body.put("sender", Map.of("name", "Jimova", "email", "rutulprajapati2006@gmail.com"));
         body.put("to", List.of(Map.of("email", toEmail, "name", toName != null ? toName : toEmail)));
         body.put("subject", subject);
         body.put("textContent", textContent);
