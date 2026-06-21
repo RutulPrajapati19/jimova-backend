@@ -1,4 +1,4 @@
-package com.enterprise.smartEcommerce.service.ServiceImpl;
+package com.enterprise.smartEcommerce.services.ServiceImpl;
 
 
 
@@ -10,7 +10,7 @@ import com.enterprise.smartEcommerce.entities.enums.Role;
 import com.enterprise.smartEcommerce.repositories.UserRepository;
 import com.enterprise.smartEcommerce.security.JwtService;
 import com.enterprise.smartEcommerce.services.AuthService;
-import com.enterprise.smartEcommerce.service.EmailService;
+import com.enterprise.smartEcommerce.services.EmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;

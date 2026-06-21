@@ -1,4 +1,4 @@
-package com.enterprise.smartEcommerce.service.ServiceImpl;
+package com.enterprise.smartEcommerce.services.ServiceImpl;
 
 
 

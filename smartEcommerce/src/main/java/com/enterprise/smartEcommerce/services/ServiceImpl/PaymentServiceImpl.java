@@ -1,10 +1,10 @@
-package com.enterprise.smartEcommerce.service.ServiceImpl;
+package com.enterprise.smartEcommerce.services.ServiceImpl;
 
 import com.enterprise.smartEcommerce.entities.CartItem;
 import com.enterprise.smartEcommerce.entities.User;
 import com.enterprise.smartEcommerce.repositories.CartItemRepository;
 import com.enterprise.smartEcommerce.repositories.UserRepository;
-import com.enterprise.smartEcommerce.service.PaymentService;
+import com.enterprise.smartEcommerce.services.PaymentService;
 import com.stripe.Stripe;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.checkout.SessionCreateParams;
