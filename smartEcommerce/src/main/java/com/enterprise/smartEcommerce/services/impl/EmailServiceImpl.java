@@ -3,28 +3,30 @@ package com.enterprise.smartEcommerce.services.impl;
 import com.enterprise.smartEcommerce.entities.Order;
 import com.enterprise.smartEcommerce.entities.OrderItem;
 import com.enterprise.smartEcommerce.services.EmailService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
-@RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
 
-    private final JavaMailSender mailSender;
+    @Value("${brevo.api.key}")
+    private String brevoApiKey;
+
+    private final RestTemplate restTemplate = new RestTemplate();
+    private static final String BREVO_URL = "https://api.brevo.com/v3/smtp/email";
 
     @Async
     @Override
     public void sendOrderConfirmation(String toEmail, Order order) {
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(toEmail);
-            message.setSubject("Jimova — Order #" + order.getId() + " Confirmed ✓");
-
             StringBuilder sb = new StringBuilder();
             sb.append("Hi ").append(order.getCustomerName()).append(",\n\n");
             sb.append("Thank you for shopping at Jimova! Your order has been confirmed.\n\n");
@@ -51,8 +53,10 @@ public class EmailServiceImpl implements EmailService {
             sb.append("Thank you for shopping with Jimova.\n");
             sb.append("— The Jimova Team");
 
-            message.setText(sb.toString());
-            mailSender.send(message);
+            sendEmail(toEmail, order.getCustomerName(),
+                    "Jimova — Order #" + order.getId() + " Confirmed",
+                    sb.toString());
+
             System.out.println("✅ Order confirmation email sent to: " + toEmail);
         } catch (Exception e) {
             System.err.println("❌ Failed to send email: " + e.getMessage());
@@ -63,20 +67,31 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public void sendPasswordResetEmail(String to, String resetLink) {
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(to);
-            message.setSubject("Jimova — Reset Your Password");
-            message.setText(
-                    "Hi,\n\n" +
-                            "We received a request to reset your Jimova account password.\n\n" +
-                            "Click the link below to reset your password (valid for 30 minutes):\n\n" +
-                            resetLink + "\n\n" +
-                            "If you didn't request this, you can safely ignore this email.\n\n" +
-                            "— The Jimova Team"
-            );
-            mailSender.send(message);
+            String text = "Hi,\n\n" +
+                    "We received a request to reset your Jimova account password.\n\n" +
+                    "Click the link below to reset your password (valid for 30 minutes):\n\n" +
+                    resetLink + "\n\n" +
+                    "If you didn't request this, you can safely ignore this email.\n\n" +
+                    "— The Jimova Team";
+
+            sendEmail(to, "Jimova User", "Jimova — Reset Your Password", text);
         } catch (Exception e) {
             System.err.println("❌ Failed to send reset email: " + e.getMessage());
         }
+    }
+
+    private void sendEmail(String toEmail, String toName, String subject, String textContent) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("api-key", brevoApiKey);
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("sender", Map.of("name", "Jimova", "email", "noreply@jimova.com"));
+        body.put("to", List.of(Map.of("email", toEmail, "name", toName != null ? toName : toEmail)));
+        body.put("subject", subject);
+        body.put("textContent", textContent);
+
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
+        restTemplate.postForEntity(BREVO_URL, request, String.class);
     }
 }
