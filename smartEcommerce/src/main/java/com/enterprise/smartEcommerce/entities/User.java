@@ -54,6 +54,9 @@ public class User implements UserDetails {
     @Column(name = "reset_token_expiry")
     private LocalDateTime resetTokenExpiry;
 
+    @Column(name = "mobile", length = 15)
+    private String mobile;
+
     // ✦ UserDetails methods ✦
 
     @Override
@@ -90,4 +93,7 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    public String getMobile() { return mobile; }
+    public void setMobile(String mobile) { this.mobile = mobile; }
 }
