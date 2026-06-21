@@ -89,7 +89,7 @@ public class EmailServiceImpl implements EmailService {
         headers.set("api-key", brevoApiKey);
 
         Map<String, Object> body = new HashMap<>();
-        body.put("sender", Map.of("name", "Jimova", "email", "rutulprajapati2006@gmail.com"));
+        body.put("sender", Map.of("name", "Jimova", "email", "prajapatirutul952@gmail.com"));
         body.put("to", List.of(Map.of("email", toEmail, "name", toName != null ? toName : toEmail)));
         body.put("subject", subject);
         body.put("textContent", textContent);
