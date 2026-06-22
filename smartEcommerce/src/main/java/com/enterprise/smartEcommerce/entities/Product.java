@@ -1,6 +1,5 @@
 package com.enterprise.smartEcommerce.entities;
 
-// ... existing imports ...
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -36,10 +35,9 @@ public class Product {
     @Column(nullable = false)
     private Integer stockQuantity;
 
-    // ---> NEW FIELD ADDED HERE <---
     private String imageUrl;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
