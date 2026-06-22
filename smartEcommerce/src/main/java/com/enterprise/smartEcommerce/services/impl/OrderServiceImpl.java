@@ -5,9 +5,11 @@ import com.enterprise.smartEcommerce.dtos.OrderResponse;
 import com.enterprise.smartEcommerce.entities.CartItem;
 import com.enterprise.smartEcommerce.entities.Order;
 import com.enterprise.smartEcommerce.entities.OrderItem;
+import com.enterprise.smartEcommerce.entities.Product;
 import com.enterprise.smartEcommerce.entities.User;
 import com.enterprise.smartEcommerce.repositories.CartItemRepository;
 import com.enterprise.smartEcommerce.repositories.OrderRepository;
+import com.enterprise.smartEcommerce.repositories.ProductRepository;
 import com.enterprise.smartEcommerce.repositories.UserRepository;
 import com.enterprise.smartEcommerce.services.EmailService;
 import com.enterprise.smartEcommerce.services.OrderService;
@@ -28,6 +30,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final CartItemRepository cartItemRepository;
     private final UserRepository userRepository;
+    private final ProductRepository productRepository;
     private final EmailService emailService;
 
     @Override
@@ -39,6 +42,21 @@ public class OrderServiceImpl implements OrderService {
         List<CartItem> cartItems = cartItemRepository.findByUserId(user.getId());
         if (cartItems.isEmpty()) {
             throw new RuntimeException("Cannot process order. Cart is already empty.");
+        }
+
+        // Check stock availability first
+        for (CartItem item : cartItems) {
+            Product product = item.getProduct();
+            if (product.getStockQuantity() < item.getQuantity()) {
+                throw new RuntimeException("Insufficient stock for: " + product.getName());
+            }
+        }
+
+        // Decrement stock
+        for (CartItem item : cartItems) {
+            Product product = item.getProduct();
+            product.setStockQuantity(product.getStockQuantity() - item.getQuantity());
+            productRepository.save(product);
         }
 
         BigDecimal totalAmount = BigDecimal.ZERO;
