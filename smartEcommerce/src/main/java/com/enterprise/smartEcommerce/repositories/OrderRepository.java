@@ -12,7 +12,6 @@ import java.util.List;
 public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByUserId(Long userId);
 
-    // Add this method to check if user purchased the product
-    @Query("SELECT COUNT(o) > 0 FROM Order o JOIN o.items i WHERE o.user.id = :userId AND i.product.id = :productId AND o.status = 'DELIVERED'")
+    @Query("SELECT COUNT(o) > 0 FROM Order o JOIN o.items i WHERE o.user.id = :userId AND i.productId = :productId AND o.status = 'DELIVERED'")
     boolean existsByUserIdAndProductId(@Param("userId") Long userId, @Param("productId") Long productId);
 }
