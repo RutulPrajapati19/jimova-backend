@@ -1,4 +1,4 @@
-package com.enterprise.smartEcommerce.services.ServiceImpl;
+package com.enterprise.smartEcommerce.services.impl;
 
 import com.enterprise.smartEcommerce.entities.CartItem;
 import com.enterprise.smartEcommerce.entities.User;
@@ -12,9 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +28,7 @@ public class PaymentServiceImpl implements PaymentService {
     private String frontendUrl;
 
     @Override
-    public Map<String, String> createCheckoutSession(String email) throws Exception {
+    public String createCheckoutSession(String email) throws Exception {
         Stripe.apiKey = stripeSecretKey;
 
         User user = userRepository.findByEmail(email)
@@ -46,7 +44,8 @@ public class PaymentServiceImpl implements PaymentService {
                         .setQuantity((long) item.getQuantity())
                         .setPriceData(SessionCreateParams.LineItem.PriceData.builder()
                                 .setCurrency("usd")
-                                .setUnitAmount(item.getProduct().getPrice().multiply(new java.math.BigDecimal("100")).longValue())
+                                .setUnitAmount(item.getProduct().getPrice()
+                                        .multiply(new java.math.BigDecimal("100")).longValue())
                                 .setProductData(SessionCreateParams.LineItem.PriceData.ProductData.builder()
                                         .setName(item.getProduct().getName())
                                         .build())
@@ -63,10 +62,6 @@ public class PaymentServiceImpl implements PaymentService {
                 .build();
 
         Session session = Session.create(params);
-
-        Map<String, String> response = new HashMap<>();
-        response.put("sessionId", session.getId());
-        response.put("url", session.getUrl());
-        return response;
+        return session.getUrl();
     }
 }

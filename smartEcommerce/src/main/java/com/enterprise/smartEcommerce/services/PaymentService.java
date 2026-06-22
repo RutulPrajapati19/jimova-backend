@@ -1,9 +1,5 @@
 package com.enterprise.smartEcommerce.services;
 
-
-
-import java.util.Map;
-
 public interface PaymentService {
-    Map<String, String> createCheckoutSession(String email) throws Exception;
+    String createCheckoutSession(String email) throws Exception;
 }

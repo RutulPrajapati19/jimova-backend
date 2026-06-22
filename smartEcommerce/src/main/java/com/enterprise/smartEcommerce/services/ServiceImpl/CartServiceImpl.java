@@ -1,6 +1,4 @@
-package com.enterprise.smartEcommerce.services.ServiceImpl;
-
-
+package com.enterprise.smartEcommerce.services.impl;
 
 import com.enterprise.smartEcommerce.dtos.CartRequest;
 import com.enterprise.smartEcommerce.dtos.CartResponse;
@@ -28,7 +26,7 @@ public class CartServiceImpl implements CartService {
     private final UserRepository userRepository;
 
     @Override
-    public CartResponse addToCart(String email, CartRequest request) {
+    public CartResponse addToCart(CartRequest request, String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -53,7 +51,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public List<CartResponse> getCartItems(String email) {
+    public List<CartResponse> getUserCart(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -64,7 +62,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void removeFromCart(String email, Long cartItemId) {
+    public void removeFromCart(Long cartItemId, String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
