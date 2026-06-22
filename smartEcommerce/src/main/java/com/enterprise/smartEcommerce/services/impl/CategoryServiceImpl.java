@@ -1,4 +1,4 @@
-package com.enterprise.smartEcommerce.services.ServiceImpl;
+package com.enterprise.smartEcommerce.services.impl;
 
 import com.enterprise.smartEcommerce.dtos.CategoryRequest;
 import com.enterprise.smartEcommerce.dtos.CategoryResponse;
